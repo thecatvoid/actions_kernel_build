@@ -1,0 +1,29 @@
+name: Build kernel
+
+on: 
+  workflow_dispatch:
+
+
+jobs:
+
+  build:
+    runs-on: ubuntu-20.04
+
+   
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+      
+    - name: Start
+      run: |
+        ./build
+         curl -F document=@"$(echo /home/runner/work/ANY/*.zip)" https://api.telegram.org/bot"${{ secrets.TOKEN_BOT }}"/sendDocument?chat_id=-1001751846474 >& /dev/null
+
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.TOKEN_GITHUB }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Flashable zip"
+        files: |
+         /home/runner/work/ANY/*.zip
