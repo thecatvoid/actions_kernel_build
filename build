@@ -43,7 +43,7 @@ make_fun -j$(nproc --all)
 cd $WORK
 [[ ! -d ANY ]] && git clone --depth=1 https://github.com/thecatvoid/AnyKernel3.git ANY
 cd ANY ; rm -rf *Image* *.zip
-cp $KERNEL_SRC/out/arch/arm64/boot/Image.gz ./
+cp $KERNEL_SRC/out/arch/arm64/boot/Image.gz-dtb ./
 date=$(date "+%Y%m%d%I%M%S")
 zip -r9 $date.zip * -x .git README.md *placeholder
 curl -T $date.zip temp.sh
