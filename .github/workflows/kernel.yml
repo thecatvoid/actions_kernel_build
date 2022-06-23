@@ -17,7 +17,7 @@ jobs:
     - name: Start
       run: |
         ./build
-         curl -F document=@"$(echo /home/runner/work/ANY/*.zip)" https://api.telegram.org/bot"${{ secrets.TOKEN_BOT }}"/sendDocument?chat_id=-1001751846474 >& /dev/null
+        curl -F document=@"$(echo /home/runner/work/ANY/*.zip)" https://api.telegram.org/bot"${{ secrets.TOKEN_BOT }}"/sendDocument?chat_id=-1001751846474 > /dev/null 2>&1
 
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
