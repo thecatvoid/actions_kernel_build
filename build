@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e -x
+
 WORK="${HOME}/work"
 KERNEL_SRC="${WORK}/kernel-msm"
 CLANG_TAR_URL="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android11-release/clang-r383902.tar.gz"
@@ -40,7 +42,7 @@ make_fun() {
 make_fun vendor/guamp_defconfig
 
 # Make kernel
-make_fun -j"$(nproc --all)"
+make_fun -j"$(nproc --all)" || make_fun -j1
 
 # Upload built kernel
 cd "${WORK}" || exit
