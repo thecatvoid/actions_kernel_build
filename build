@@ -2,35 +2,24 @@
 
 WORK="${HOME}/work"
 KERNEL_SRC="${WORK}/kernel-msm"
-CLANG_TAR_URL="https://android.googlesource.com/\
-	platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android11-release/\
-	clang-r383902.tar.gz"
+CLANG_TAR_URL="https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android11-release/clang-r383902.tar.gz"
 
-BINUTILS_GIT="https://android.googlesource.com/\
-	platform/prebuilts/gcc/linux-x86/aarch64/\
-	aarch64-linux-android-4.9" 
+BINUTILS_GIT="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9" 
 
-BINUTILS_32_GIT="https://android.googlesource.com/\
-	platform/prebuilts/gcc/linux-x86/arm/\
-	arm-linux-androideabi-4.9"
+BINUTILS_32_GIT="https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9"
 
-KERNEL_SOURCE_URL="https://github.com/\
-	thecatvoid/android_kernel_motorola_guamp"
+KERNEL_SOURCE_URL="https://github.com/thecatvoid/android_kernel_motorola_guamp"
 
-ANYKERNEL_GIT="https://github.com/\
-	thecatvoid/AnyKernel3.git"
+ANYKERNEL_GIT="https://github.com/thecatvoid/AnyKernel3.git"
 
 mkdir -p "${WORK}"
 cd "${WORK}" || exit 1
 
 # Setup stuff
-for i in *
-do
-	[ "$i" != clang ] && mkdir clang && curl -Lsq "${CLANG_TAR_URL}" -o clang.tgz && tar -xzf clang.tgz -C clang
-	[ "$i" != binutils ] && git clone --depth=1 "${BINUTILS_GIT}" -b android11-release binutils
-	[ "$i" != binutils-32 ] && git clone --depth=1 "${BINUTILS_32_GIT}" -b android11-release binutils-32
-	[ "$i" != kernel-msm ] && git clone --depth=1 "${KERNEL_SOURCE_URL}" kernel-msm
-done
+if [ ! -d clang ]; then mkdir clang && curl -Lsq "${CLANG_TAR_URL}" -o clang.tgz && tar -xzf clang.tgz -C clang; fi
+[ ! -d binutils ] && git clone --depth=1 "${BINUTILS_GIT}" -b android11-release binutils
+[ ! -d binutils-32 ] && git clone --depth=1 "${BINUTILS_32_GIT}" -b android11-release binutils-32
+[ ! -d kernel-msm ] && git clone --depth=1 "${KERNEL_SOURCE_URL}" kernel-msm
 
 # Set toolchain path
 PATH="${WORK}/clang/bin:${WORK}/binutils/bin:${WORK}/binutils-32/bin:/bin"
