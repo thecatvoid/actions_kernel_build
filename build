@@ -2,16 +2,35 @@
 
 WORK="${HOME}/work"
 KERNEL_SRC="${WORK}/kernel-msm"
+CLANG_TAR_URL="https://android.googlesource.com/\
+	platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android11-release/\
+	clang-r383902.tar.gz"
+
+BINUTILS_GIT="https://android.googlesource.com/\
+	platform/prebuilts/gcc/linux-x86/aarch64/\
+	aarch64-linux-android-4.9" 
+
+BINUTILS_32_GIT="https://android.googlesource.com/\
+	platform/prebuilts/gcc/linux-x86/arm/\
+	arm-linux-androideabi-4.9"
+
+KERNEL_SOURCE_URL="https://github.com/\
+	thecatvoid/android_kernel_motorola_guamp"
+
+ANYKERNEL_GIT="https://github.com/\
+	thecatvoid/AnyKernel3.git"
+
 mkdir -p "${WORK}"
 cd "${WORK}" || exit 1
 
 # Setup stuff
-case * in
-	clang) mkdir clang && curl -Lsq https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android11-release/clang-r383902.tar.gz -o - | tar -xzf - -C clang ;;
-	binutils) git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 -b android11-release binutils ;;
-	binutils-32) git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9 -b android11-release binutils-32 ;;
-	kernel-msm) git clone --depth=1 https://github.com/thecatvoid/android_kernel_motorola_guamp kernel-msm ;;
-esac
+for i in *
+do
+	[ "$i" != clang ] && mkdir clang && curl -Lsq "${CLANG_TAR_URL}" -o clang.tgz && tar -xzf clang.tgz -C clang
+	[ "$i" != binutils ] && git clone --depth=1 "${BINUTILS_GIT}" -b android11-release binutils
+	[ "$i" != binutils-32 ] && git clone --depth=1 "${BINUTILS_32_GIT}" -b android11-release binutils-32
+	[ "$i" != kernel-msm ] && git clone --depth=1 "${KERNEL_SOURCE_URL}" kernel-msm
+done
 
 # Set toolchain path
 PATH="${WORK}/clang/bin:${WORK}/binutils/bin:${WORK}/binutils-32/bin:/bin"
@@ -36,7 +55,7 @@ make_fun -j"$(nproc --all)"
 
 # Upload built kernel
 cd "${WORK}" || exit
-[ ! -d ANY ] && git clone --depth=1 https://github.com/thecatvoid/AnyKernel3.git ANY
+[ ! -d ANY ] && git clone --depth=1 "${ANYKERNEL_GIT}" ANY
 cd ANY || exit 1
 rm -rf ./*Image* ./*.zip
 cp "${KERNEL_SRC}/out/arch/arm64/boot/Image.gz-dtb" ./
